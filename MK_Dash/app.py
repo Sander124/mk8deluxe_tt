@@ -218,12 +218,12 @@ CUPS_RACES = {
     "Flower Cup": ["Mario Circuit", "Toad Harbor", "Twisted Mansion", "Shy Guy Falls"],
     "Star Cup": ["Sunshine Airport", "Dolphin Shoals", "Electrodrome", "Mount Wario"],
     "Special Cup": ["Cloudtop Cruise", "Bone-Dry Dunes", "Bowser's Castle", "Rainbow Road"],
-    "Shell Cup": ["Moo Moo Meadows", "Mario Circuit", "Cheep Cheep Beach", "Toad's Turnpike"],
+    "Shell Cup": ["Moo Moo Meadows", "Mario Circuit", "Cheep Cheep Beach", "Toads Turnpike"],
     "Banana Cup": ["Dry Dry Desert", "Donut Plains 3", "Royal Raceway", "DK Jungle"],
     "Leaf Cup": ["Wario Stadium", "Sherbet Land", "Music Park", "Yoshi Valley"],
     "Lightning Cup": ["Tick-Tock Clock", "Piranha Plant Slide", "Grumble Volcano", "N64 Rainbow Road"],
     "Egg Cup": ["Yoshi Circuit", "Excitebike Arena", "Dragon Driftway", "Mute City"],
-    "Triforce Cup": ["Wario's Gold Mine", "SNES Rainbow Road", "Ice Ice Outpost", "Hyrule Circuit"],
+    "Triforce Cup": ["Warios Gold Mine", "SNES Rainbow Road", "Ice Ice Outpost", "Hyrule Circuit"],
     "Crossing Cup": ["Baby Park", "Cheese Land", "Wild Woods", "Animal Crossing"],
     "Bell Cup": ["Neo Bowser City", "Ribbon Road", "Super Bell Subway", "Big Blue"]
 }
