@@ -725,7 +725,7 @@ def main():
     
             with col2:
                 # Update session state when cup changes
-                if cup != st.session_state.selected_cup:
+                if cup != st.session_state.selected_cup_data:
                     st.session_state.selected_cup = cup
         
                 race = st.selectbox("Race", CUPS_RACES.get(cup, []))
