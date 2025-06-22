@@ -732,7 +732,7 @@ def main():
                 tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
             
                 st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
-                submitted = st.form_submit_button("Submit Time")
+            submitted = st.form_submit_button("Submit Time")
             
             if submitted:
                 if speler and cup and race and tijd:
