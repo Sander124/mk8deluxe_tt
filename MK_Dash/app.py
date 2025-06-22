@@ -796,7 +796,7 @@ def main():
                     date_str = ''
                 st.markdown(f"""
                 <div class="f1-message-box">
-                    {speler} submitted a new time at {cup} - {race} and set a time of <span style='color:#f1c40f'>{tijd}</span>.
+                    <em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> and set a time of <em style='color:#f1c40f'>{tijd}</em>.
                     <div class="f1-message-date">{date_str}</div>
                 </div>
                 """, unsafe_allow_html=True)
