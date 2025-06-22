@@ -720,7 +720,7 @@ def main():
             with col1:
                 speler = st.text_input("Player", placeholder="Voer spelernaam in")
                 cup = st.selectbox("Cup", list(CUPS_RACES.keys()), 
-                                  index=list(CUPS_RACES.keys()).index(st.session_state.selected_cup) 
+                                  index=list(CUPS_RACES.keys()).index(st.session_state.selected_cup_data) 
                                   if st.session_state.selected_cup_data in CUPS_RACES else 0)
     
             with col2:
