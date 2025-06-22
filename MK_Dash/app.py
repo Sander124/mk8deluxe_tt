@@ -773,7 +773,7 @@ def main():
             if 'timestamp' in df.columns:
                 recent_df = df.sort_values('timestamp', ascending=False).head(10)
             else:
-                recent_df = df.head(10)
+                recent_df = df.head(25)
             for _, row in recent_df.iterrows():
                 speler = row['speler']
                 cup = row['cup']
