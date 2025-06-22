@@ -195,7 +195,7 @@ st.markdown("""
 def init_connection():
     try:
         client = pymongo.MongoClient(st.secrets["mongo"]["connection_string"])
-        st.write(client)
+        #st.write(client)
         return client[st.secrets["mongo"]["database"]]
     except Exception as e:
         st.error(f"Database connection failed: {e}")
