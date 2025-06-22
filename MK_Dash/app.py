@@ -9,184 +9,191 @@ import io
 import os
 import base64
 
-
-    # Page config
+# Set wide layout and robust background at the very top
 st.set_page_config(
     page_title="Mario Kart 8 Deluxe Time Trial Dashboard",
     page_icon="🏁",
     layout="wide"
 )
 
-# Custom CSS for F1 styling
 st.markdown("""
 <style>
-    .main {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-        color: white;
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 8px;
-        padding: 5px;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        background: linear-gradient(135deg, #2c3e50, #34495e);
-        border-radius: 8px;
-        color: white;
-        font-weight: bold;
-        border: 1px solid #7f8c8d;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        color: white;
-        border: 1px solid #e74c3c;
-    }
-    
-    /* F1 Scoreboard styling */
-    .f1-header {
-        background: linear-gradient(90deg, #1a1a2e 0%, #e74c3c 50%, #1a1a2e 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        margin-bottom: 20px;
-        border: 2px solid #e74c3c;
-    }
-    
-    .f1-ranking-row {
-        background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
-        color: white;
-        padding: 12px 20px;
-        margin: 2px 0;
-        border-left: 4px solid;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-weight: bold;
-    }
-    
-    .f1-ranking-row.first {
-        border-left-color: #f1c40f;
-        background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
-    }
-    
-    .f1-ranking-row.second {
-        border-left-color: #95a5a6;
-        background: linear-gradient(90deg, #95a5a6 0%, #7f8c8d 100%);
-    }
-    
-    .f1-ranking-row.third {
-        border-left-color: #cd7f32;
-        background: linear-gradient(90deg, #cd7f32 0%, #a0522d 100%);
-    }
-    
-    .f1-cup-container {
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-        border: 1px solid #7f8c8d;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 10px 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    
-    .f1-cup-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #7f8c8d;
-    }
-    
-    .f1-cup-image {
-        margin-right: 15px;
-    }
-    
-    .f1-cup-title {
-        color: white;
-        font-weight: bold;
-        font-size: 1.2em;
-        font-family: 'Monaco', 'Consolas', monospace;
-    }
-    
-    .f1-points-row {
-        background: rgba(255,255,255,0.1);
-        padding: 8px 12px;
-        margin: 3px 0;
-        border-radius: 4px;
-        display: flex;
-        justify-content: space-between;
-        font-family: 'Monaco', 'Consolas', monospace;
-    }
-    
-    /* Hide default streamlit styling */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    
-    /* Override streamlit default colors */
-    .stSelectbox > div > div {
-        background-color: #34495e;
-        color: white;
-    }
-    
-    .stTextInput > div > div > input {
-        background-color: #34495e;
-        color: white;
-        border: 1px solid #7f8c8d;
-    }
-    
-    .f1-cup-btn {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
-        border: 2px solid #e74c3c !important;
-        border-radius: 8px !important;
-        color: white !important;
-        font-family: Monaco, Consolas, monospace !important;
-        font-weight: bold !important;
-        font-size: 1.3em !important;
-        box-shadow: none !important;
-        margin-bottom: 8px;
-    }
-    .f1-cup-btn:hover {
-        filter: brightness(1.1);
-        border-color: #f39c12 !important;
-    }
-    /* Remove default Streamlit button background */
-    button[data-testid^="baseButton-cup_"] {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
-        border: 2px solid #e74c3c !important;
-        border-radius: 8px !important;
-        color: white !important;
-        font-family: Monaco, Consolas, monospace !important;
-        font-weight: bold !important;
-        font-size: 1.3em !important;
-        box-shadow: none !important;
-        margin-bottom: 8px;
-    }
-    button[data-testid^="baseButton-cup_"]:hover {
-        filter: brightness(1.1);
-        border-color: #f39c12 !important;
-    }
-    .element-container:has(#button-after) + div button {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
-        border: 2px solid #e74c3c !important;
-        border-radius: 8px !important;
-        color: white !important;
-        font-family: Monaco, Consolas, monospace !important;
-        font-weight: bold !important;
-        font-size: 1.3em !important;
-        box-shadow: none !important;
-        margin-bottom: 8px;
-    }
-    .element-container:has(#button-after) + div button:hover {
-        filter: brightness(1.1);
-        border-color: #f39c12 !important;
-    }
+.stApp {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    color: white;
+    min-height: 100vh;
+}
+.stApp, .stApp * {
+    color: white !important;
+}
+
+.main {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    border: 1px solid #7f8c8d;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: 1px solid #e74c3c;
+}
+
+/* F1 Scoreboard styling */
+.f1-header {
+    background: linear-gradient(90deg, #1a1a2e 0%, #e74c3c 50%, #1a1a2e 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 2px solid #e74c3c;
+}
+
+.f1-ranking-row {
+    background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 12px 20px;
+    margin: 2px 0;
+    border-left: 4px solid;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-weight: bold;
+}
+
+.f1-ranking-row.first {
+    border-left-color: #f1c40f;
+    background: linear-gradient(90deg, #f39c12 0%, #e67e22 100%);
+}
+
+.f1-ranking-row.second {
+    border-left-color: #95a5a6;
+    background: linear-gradient(90deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.f1-ranking-row.third {
+    border-left-color: #cd7f32;
+    background: linear-gradient(90deg, #cd7f32 0%, #a0522d 100%);
+}
+
+.f1-cup-container {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    border: 1px solid #7f8c8d;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.f1-cup-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #7f8c8d;
+}
+
+.f1-cup-image {
+    margin-right: 15px;
+}
+
+.f1-cup-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+    font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.f1-points-row {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 12px;
+    margin: 3px 0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Monaco', 'Consolas', monospace;
+}
+
+/* Hide default streamlit styling */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* Override streamlit default colors */
+.stSelectbox > div > div {
+    background-color: #34495e;
+    color: white;
+}
+
+.stTextInput > div > div > input {
+    background-color: #34495e;
+    color: white;
+    border: 1px solid #7f8c8d;
+}
+
+.f1-cup-btn {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    border: 2px solid #e74c3c !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-family: Monaco, Consolas, monospace !important;
+    font-weight: bold !important;
+    font-size: 1.3em !important;
+    box-shadow: none !important;
+    margin-bottom: 8px;
+}
+.f1-cup-btn:hover {
+    filter: brightness(1.1);
+    border-color: #f39c12 !important;
+}
+/* Remove default Streamlit button background */
+button[data-testid^="baseButton-cup_"] {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    border: 2px solid #e74c3c !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-family: Monaco, Consolas, monospace !important;
+    font-weight: bold !important;
+    font-size: 1.3em !important;
+    box-shadow: none !important;
+    margin-bottom: 8px;
+}
+button[data-testid^="baseButton-cup_"]:hover {
+    filter: brightness(1.1);
+    border-color: #f39c12 !important;
+}
+.element-container:has(#button-after) + div button {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    border: 2px solid #e74c3c !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-family: Monaco, Consolas, monospace !important;
+    font-weight: bold !important;
+    font-size: 1.3em !important;
+    box-shadow: none !important;
+    margin-bottom: 8px;
+}
+.element-container:has(#button-after) + div button:hover {
+    filter: brightness(1.1);
+    border-color: #f39c12 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -195,7 +202,6 @@ st.markdown("""
 def init_connection():
     try:
         client = pymongo.MongoClient(st.secrets["mongo"]["connection_string"])
-        #st.write(client)
         return client[st.secrets["mongo"]["database"]]
     except Exception as e:
         st.error(f"Database connection failed: {e}")
@@ -218,7 +224,7 @@ CUPS_RACES = {
 }
 
 # Mario Kart 8 Deluxe cups en races
-def get_cup_image(cup_name, image_folder="MK_Dash/cup_images"):
+def get_cup_image(cup_name, image_folder="cup_images"):
     """Return image path for cup visualization"""
     # Define image filenames (you can adjust these to match your actual filenames)
     image_files = {
@@ -275,7 +281,7 @@ def display_cup_image(cup_name, width=100):
         st.markdown(f"<div style='font-size: {width//2}px; text-align: center;'>{image_path}</div>", 
                    unsafe_allow_html=True)
 
-def get_race_image(race_name, image_folder="MK_Dash/race_images"):
+def get_race_image(race_name, image_folder="race_images"):
     """Return image path for race visualization"""
     # Replace spaces and special characters for filename
     filename = race_name.replace(' ', '_').replace("'", "").replace(':', '').replace('/', '_') + ".png"
@@ -596,7 +602,7 @@ def main():
                                 if isinstance(image_path, str) and image_path.endswith(('.png', '.jpg', '.jpeg')):
                                     try:
                                         image = Image.open(image_path)
-                                        st.image(image, width=60, use_container_width=False)
+                                        st.image(image, width=60, use_column_width=False)
                                     except:
                                         st.markdown(f"<div style='font-size: 48px; text-align: center;'>{get_cup_image(cup)}</div>", unsafe_allow_html=True)
                                 else:
@@ -637,7 +643,7 @@ def main():
                         race_image_path = get_race_image(race)
                         if race_image_path:
                             try:
-                                race_image = Image.open(race_image_path).resize((64, 64))
+                                race_image = Image.open(race_image_path).resize((64, 96))
                                 img_base64 = image_to_base64(race_image)
                                 race_img_html = f"<img src='data:image/png;base64,{img_base64}' style='height:50px;width:50px;vertical-align:middle;margin-right:10px;'/>"
                             except Exception as e:
