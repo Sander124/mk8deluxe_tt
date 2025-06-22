@@ -711,15 +711,15 @@ def main():
             col1, col2 = st.columns(2)
             
             with col1:
-                speler = st.text_input("Speler", placeholder="Voer spelernaam in")
+                speler = st.text_input("Player", placeholder="Voer spelernaam in")
                 cup = st.selectbox("Cup", list(CUPS_RACES.keys()))
             
             with col2:
                 race = st.selectbox("Race", CUPS_RACES[cup] if cup else [])
-                tijd = st.text_input("Tijd", placeholder="MM:SS.mmm (bijv. 1:32.456)")
+                tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
             
             st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
-            submitted = st.form_submit_button("Tijd Opslaan")
+            submitted = st.form_submit_button("Submit Time")
             
             if submitted:
                 if speler and cup and race and tijd:
@@ -727,7 +727,7 @@ def main():
                     test_seconds = time_to_seconds(tijd)
                     if test_seconds != float('inf'):
                         if save_time_trial(speler, cup, race, tijd):
-                            st.success(f"Tijd opgeslagen: {speler} - {race} - {tijd}")
+                            st.success(f"Time submitted: {speler} - {race} - {tijd}")
                             st.rerun()
                         else:
                             st.error("Fout bij opslaan van tijd")
@@ -738,11 +738,34 @@ def main():
         
         # Show recent entries
         if not df.empty:
-            st.markdown("<h3 style='color: white; font-family: Monaco, Consolas, monospace;'>RECENT TIMES</h3>", unsafe_allow_html=True)
-            recent_df = df.sort_values('timestamp', ascending=False).head(25) if 'timestamp' in df.columns else df.head(10)
-            
-            display_df = recent_df[['speler', 'cup', 'race', 'tijd']].copy().reset_index(drop=True)
-            st.dataframe(display_df, hide_index=True,use_container_width=True)
-
+            st.markdown("""
+            <style>
+            /* F1 styling for the recent times dataframe */
+            .f1-recent-table .stDataFrame {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+                border: 2px solid #e74c3c !important;
+                border-radius: 10px !important;
+                color: white !important;
+                font-family: Monaco, Consolas, monospace !important;
+                font-weight: bold !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            }
+            .f1-recent-table .stDataFrame table {
+                color: white !important;
+                background: transparent !important;
+                font-family: Monaco, Consolas, monospace !important;
+                font-weight: bold !important;
+            }
+            .f1-recent-table .stDataFrame th, .f1-recent-table .stDataFrame td {
+                background: transparent !important;
+                color: white !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            st.markdown('<div class="f1-recent-table">', unsafe_allow_html=True)
+            recent_df = df.sort_values('timestamp', ascending=False).head(10) if 'timestamp' in df.columns else df.head(10)
+            display_df = recent_df[['speler', 'cup', 'race', 'tijd']].copy()
+            st.dataframe(display_df, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 if __name__ == "__main__":
     main()
