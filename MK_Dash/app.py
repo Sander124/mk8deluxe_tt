@@ -316,9 +316,6 @@ def seconds_to_time(seconds):
     minutes = int(seconds // 60)
     secs = seconds % 60
     return f"{minutes}:{secs:06.3f}"
-@st.fragment
-def race_selector(cup):
-    return st.selectbox("Race", CUPS_RACES.get(cup, []))
     
 def calculate_points(times_df):
     """Calculate points based on ranking system"""
@@ -356,6 +353,12 @@ def calculate_points(times_df):
     
     return pd.DataFrame(points_data)
 
+def get_cup_from_race(race_name):
+    for cup, races in CUPS_RACES.items():
+        if race_name in races:
+            return cup
+    return None
+    
 def load_data():
     """Load data from MongoDB"""
     db = init_connection()
@@ -709,45 +712,33 @@ def main():
     
     with tab3:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>SUBMIT YOUR TIME</h2>", unsafe_allow_html=True)
-        
-        # Initialize session state for cup if it doesn't exist
-        if 'selected_cup_data' not in st.session_state:
-            st.session_state.selected_cup_data = list(CUPS_RACES.keys())[0] if CUPS_RACES else ""
+
+        all_races = []
+        for races in CUPS_RACES.values():
+            all_races.extend(races)
 
         with st.form("time_entry_form"):
-            col1, col2 = st.columns(2)
-    
-            with col1:
-                speler = st.text_input("Player", placeholder="Voer spelernaam in")
-                cup = st.selectbox("Cup", list(CUPS_RACES.keys()), 
-                                  index=list(CUPS_RACES.keys()).index(st.session_state.selected_cup_data) 
-                                  if st.session_state.selected_cup_data in CUPS_RACES else 0)
-    
-            with col2:
-                # Update session state when cup changes
-                if cup != st.session_state.selected_cup_data:
-                    st.session_state.selected_cup = cup
+            speler = st.text_input("Player", placeholder="Voer spelernaam in")
+            race = st.selectbox("Race", sorted(all_races))  # Gesorteerd voor betere UX
+            tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
+        st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
+        submitted = st.form_submit_button("Submit Time")
         
-                race = st.selectbox("Race", CUPS_RACES.get(cup, []))
-                tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
-            
-                st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
-            submitted = st.form_submit_button("Submit Time")
-            
-            if submitted:
-                if speler and cup and race and tijd:
-                    # Validate time format
-                    test_seconds = time_to_seconds(tijd)
-                    if test_seconds != float('inf') and tijd[1] == ':' and tijd[4] == '.':
-                        if save_time_trial(speler, cup, race, tijd):
-                            st.success(f"Time submitted: {speler} - {race} - {tijd}")
-                            st.rerun()
-                        else:
-                            st.error("Fout bij opslaan van tijd")
+        if submitted:
+            cup = get_cup_from_race(race)
+            if speler and cup and race and tijd:
+                # Validate time format
+                test_seconds = time_to_seconds(tijd)
+                if test_seconds != float('inf') and tijd[1] == ':' and tijd[4] == '.':
+                    if save_time_trial(speler, cup, race, tijd):
+                        st.success(f"Time submitted: {speler} - {race} - {tijd}")
+                        st.rerun()
                     else:
-                        st.error("Ongeldige tijdformat. Gebruik MM:SS.mmm (bijv. 1:32.456)")
+                        st.error("Fout bij opslaan van tijd")
                 else:
-                    st.error("Vul alle velden in")
+                    st.error("Ongeldige tijdformat. Gebruik MM:SS.mmm (bijv. 1:32.456)")
+            else:
+                st.error("Vul alle velden in")
         
         # Show recent entries
         if not df.empty:
