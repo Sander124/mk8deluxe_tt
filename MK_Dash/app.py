@@ -219,13 +219,13 @@ CUPS_RACES = {
     "Star Cup": ["Sunshine Airport", "Dolphin Shoals", "Electrodrome", "Mount Wario"],
     "Special Cup": ["Cloudtop Cruise", "Bone-Dry Dunes", "Bowser's Castle", "Rainbow Road"],
     "Shell Cup": ["Wii Moo Moo Meadows", "GBA Peach Circuit", "Wii Grumble Volcano", "N64 Rainbow Road"],
-    "Banana Cup": ["GCN Dry Dry Desert", "SNES Donut Plains 3", "N64 Royal Raceway", "3DS DK Jungle"],
-    "Leaf Cup": ["DS Wario Stadium", "GCN Sherbet Land", "3DS Music Park", "N64 Yoshi Valley"],
-    "Lightning Cup": ["DS Tick-Tock Clock", "3DS Piranha Plant Slide", "Wii Grumble Volcano", "N64 Rainbow Road"],
-    "Egg Cup": ["GCN Yoshi Circuit", "Excitebike Arena", "Dragon Driftway", "Mute City"],
-    "Triforce Cup": ["Wii Wario's Gold Mine", "SNES Rainbow Road", "Ice Ice Outpost", "Hyrule Circuit"],
-    "Crossing Cup": ["GCN Baby Park", "GBA Cheese Land", "Wild Woods", "Animal Crossing"],
-    "Bell Cup": ["3DS Neo Bowser City", "GBA Ribbon Road", "Super Bell Subway", "Big Blue"]
+    "Banana Cup": ["Dry Dry Desert", "Donut Plains 3", "Royal Raceway", "DK Jungle"],
+    "Leaf Cup": ["Wario Stadium", "Sherbet Land", "Music Park", "Yoshi Valley"],
+    "Lightning Cup": ["Tick-Tock Clock", "Piranha Plant Slide", "Grumble Volcano", "N64 Rainbow Road"],
+    "Egg Cup": ["Yoshi Circuit", "Excitebike Arena", "Dragon Driftway", "Mute City"],
+    "Triforce Cup": ["Wario's Gold Mine", "SNES Rainbow Road", "Ice Ice Outpost", "Hyrule Circuit"],
+    "Crossing Cup": ["Baby Park", "Cheese Land", "Wild Woods", "Animal Crossing"],
+    "Bell Cup": ["Neo Bowser City", "Ribbon Road", "Super Bell Subway", "Big Blue"]
 }
 
 # Mario Kart 8 Deluxe cups en races
