@@ -741,36 +741,65 @@ def main():
             else:
                 st.error("Vul alle velden in")
         
-        # Show recent entries
+        # Show recent entries as F1-styled message boxes
         if not df.empty:
             st.markdown("""
             <style>
-            /* F1 styling for the recent times dataframe */
-            .f1-recent-table .stDataFrame {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
-                border: 2px solid #e74c3c !important;
-                border-radius: 10px !important;
-                color: white !important;
-                font-family: Monaco, Consolas, monospace !important;
-                font-weight: bold !important;
+            .f1-message-box {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+                border: 2px solid #e74c3c;
+                border-radius: 10px;
+                color: white;
+                font-family: Monaco, Consolas, monospace;
+                font-weight: bold;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+                margin-bottom: 18px;
+                padding: 18px 22px 10px 22px;
+                position: relative;
             }
-            .f1-recent-table .stDataFrame table {
-                color: white !important;
-                background: transparent !important;
-                font-family: Monaco, Consolas, monospace !important;
-                font-weight: bold !important;
-            }
-            .f1-recent-table .stDataFrame th, .f1-recent-table .stDataFrame td {
-                background: transparent !important;
-                color: white !important;
+            .f1-message-date {
+                color: #f1c40f;
+                font-size: 0.95em;
+                font-weight: normal;
+                font-family: Monaco, Consolas, monospace;
+                position: absolute;
+                bottom: 8px;
+                right: 22px;
             }
             </style>
             """, unsafe_allow_html=True)
-            st.markdown('<div class="f1-recent-table">', unsafe_allow_html=True)
-            recent_df = df.sort_values('timestamp', ascending=False).head(10) if 'timestamp' in df.columns else df.head(10)
-            display_df = recent_df[['speler', 'cup', 'race', 'tijd']].copy()
-            st.dataframe(display_df, use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("<h3 style='color: white; font-family: Monaco, Consolas, monospace;'>RECENT TIMES</h3>", unsafe_allow_html=True)
+            # Sort and display the 10 most recent submissions
+            if 'timestamp' in df.columns:
+                recent_df = df.sort_values('timestamp', ascending=False).head(10)
+            else:
+                recent_df = df.head(10)
+            for _, row in recent_df.iterrows():
+                speler = row['speler']
+                cup = row['cup']
+                race = row['race']
+                tijd = row['tijd']
+                # Format date
+                if 'timestamp' in row and pd.notnull(row['timestamp']):
+                    if isinstance(row['timestamp'], str):
+                        try:
+                            dt = pd.to_datetime(row['timestamp'])
+                        except:
+                            dt = None
+                    else:
+                        dt = row['timestamp']
+                    if dt is not None:
+                        date_str = dt.strftime('%d %B %Y %H:%M')
+                    else:
+                        date_str = ''
+                else:
+                    date_str = ''
+                st.markdown(f"""
+                <div class="f1-message-box">
+                    {speler} submitted a new time at {cup} - {race} and set a time of <span style='color:#f1c40f'>{tijd}</span>.
+                    <div class="f1-message-date">{date_str}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
 if __name__ == "__main__":
     main()
