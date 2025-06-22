@@ -239,7 +239,6 @@ def get_cup_image(cup_name, image_folder="MK_Dash/cup_images"):
     filename = image_files.get(cup_name)
     if filename:
         image_path = os.path.join(image_folder, filename)
-        st.write(image_path)
         if os.path.exists(image_path):
             return image_path
     
@@ -276,7 +275,7 @@ def display_cup_image(cup_name, width=100):
         st.markdown(f"<div style='font-size: {width//2}px; text-align: center;'>{image_path}</div>", 
                    unsafe_allow_html=True)
 
-def get_race_image(race_name, image_folder="race_images"):
+def get_race_image(race_name, image_folder="MK_Dash/race_images"):
     """Return image path for race visualization"""
     # Replace spaces and special characters for filename
     filename = race_name.replace(' ', '_').replace("'", "").replace(':', '').replace('/', '_') + ".png"
