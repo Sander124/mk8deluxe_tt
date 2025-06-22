@@ -702,7 +702,7 @@ def main():
                             """, unsafe_allow_html=True)
                     else:
                         st.markdown(f"""
-                        <p style='color: #7f8c8d; margin: 5px 0 0 0; font-style: italic;'>Geen tijden beschikbaar</p>
+                        <p style='color: #7f8c8d; margin: 5px 0 0 0; font-style: italic;'>No times available</p>
                         </div>
                         """, unsafe_allow_html=True)
             #else:
