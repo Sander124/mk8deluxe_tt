@@ -239,6 +239,7 @@ def get_cup_image(cup_name, image_folder="cup_images"):
     filename = image_files.get(cup_name)
     if filename:
         image_path = os.path.join(image_folder, filename)
+        st.write(image_path)
         if os.path.exists(image_path):
             return image_path
     
