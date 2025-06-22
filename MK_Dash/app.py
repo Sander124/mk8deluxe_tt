@@ -316,7 +316,10 @@ def seconds_to_time(seconds):
     minutes = int(seconds // 60)
     secs = seconds % 60
     return f"{minutes}:{secs:06.3f}"
-
+@st.fragment
+def race_selector(cup):
+    return st.selectbox("Race", CUPS_RACES.get(cup, []))
+    
 def calculate_points(times_df):
     """Calculate points based on ranking system"""
     if times_df.empty:
@@ -426,7 +429,7 @@ def main():
     df = load_data()
     
     # Create tabs
-    tab1, tab2, tab3 = st.tabs(["📊 DASHBOARD", "🏆 TIME TRIAL", "⏱️ SUBMIT TIMES"])
+    tab1, tab2, tab3 = st.tabs(["📊 STANDINGS", "🏆 TIME TRIAL", "⏱️ SUBMIT TIMES"])
     
     with tab1:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>DRIVER STANDINGS</h2>", unsafe_allow_html=True)
@@ -709,13 +712,13 @@ def main():
         
         with st.form("time_entry_form"):
             col1, col2 = st.columns(2)
-            
+    
             with col1:
                 speler = st.text_input("Player", placeholder="Voer spelernaam in")
                 cup = st.selectbox("Cup", list(CUPS_RACES.keys()))
-            
+    
             with col2:
-                race = st.selectbox("Race", CUPS_RACES[cup] if cup else [])
+                race = race_selector(cup)
                 tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
             
             st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
