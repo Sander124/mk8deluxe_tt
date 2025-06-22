@@ -22,6 +22,11 @@ st.markdown("""
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
     color: white;
     min-height: 100vh;
+    background-attachment: fixed;
+}
+html, body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    min-height: 100vh;
 }
 .stApp, .stApp * {
     color: white !important;
