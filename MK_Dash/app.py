@@ -195,8 +195,7 @@ st.markdown("""
 def init_connection():
     try:
         client = pymongo.MongoClient(st.secrets["mongo"]["connection_string"])
-        #client = pymongo.MongoClient('mongodb+srv://sandersteur2:rJDCcg502peL5JS6@clustersander.yzcdzii.mongodb.net/?tls=true')
-        return client[st.secrets["mongo"]["database"]] #client['MK8Deluxe']
+        return client[st.secrets["mongo"]["database"]]
     except Exception as e:
         st.error(f"Database connection failed: {e}")
         return None
