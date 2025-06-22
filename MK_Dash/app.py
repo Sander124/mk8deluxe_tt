@@ -596,7 +596,7 @@ def main():
                                 if isinstance(image_path, str) and image_path.endswith(('.png', '.jpg', '.jpeg')):
                                     try:
                                         image = Image.open(image_path)
-                                        st.image(image, width=60, use_column_width=False)
+                                        st.image(image, width=60, use_container_width=False)
                                     except:
                                         st.markdown(f"<div style='font-size: 48px; text-align: center;'>{get_cup_image(cup)}</div>", unsafe_allow_html=True)
                                 else:
