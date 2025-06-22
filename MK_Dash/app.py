@@ -648,7 +648,7 @@ def main():
                         race_image_path = get_race_image(race)
                         if race_image_path:
                             try:
-                                race_image = Image.open(race_image_path).resize((64, 128))
+                                race_image = Image.open(race_image_path).resize((64, 180))
                                 img_base64 = image_to_base64(race_image)
                                 race_img_html = f"<img src='data:image/png;base64,{img_base64}' style='height:50px;width:50px;vertical-align:middle;margin-right:10px;'/>"
                             except Exception as e:
