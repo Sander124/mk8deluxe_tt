@@ -229,7 +229,7 @@ CUPS_RACES = {
 }
 
 # Mario Kart 8 Deluxe cups en races
-def get_cup_image(cup_name, image_folder="cup_images"):
+def get_cup_image(cup_name, image_folder="MK_Dash/cup_images"):
     """Return image path for cup visualization"""
     # Define image filenames (you can adjust these to match your actual filenames)
     image_files = {
@@ -286,7 +286,7 @@ def display_cup_image(cup_name, width=100):
         st.markdown(f"<div style='font-size: {width//2}px; text-align: center;'>{image_path}</div>", 
                    unsafe_allow_html=True)
 
-def get_race_image(race_name, image_folder="race_images"):
+def get_race_image(race_name, image_folder="MK_Dash/race_images"):
     """Return image path for race visualization"""
     # Replace spaces and special characters for filename
     filename = race_name.replace(' ', '_').replace("'", "").replace(':', '').replace('/', '_') + ".png"
