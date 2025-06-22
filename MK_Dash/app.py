@@ -710,19 +710,29 @@ def main():
     with tab3:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>SUBMIT YOUR TIME</h2>", unsafe_allow_html=True)
         
+        # Initialize session state for cup if it doesn't exist
+        if 'selected_cup_data' not in st.session_state:
+            st.session_state.selected_cup_data = list(CUPS_RACES.keys())[0] if CUPS_RACES else ""
+
         with st.form("time_entry_form"):
             col1, col2 = st.columns(2)
     
             with col1:
                 speler = st.text_input("Player", placeholder="Voer spelernaam in")
-                cup = st.selectbox("Cup", list(CUPS_RACES.keys()))
+                cup = st.selectbox("Cup", list(CUPS_RACES.keys()), 
+                                  index=list(CUPS_RACES.keys()).index(st.session_state.selected_cup) 
+                                  if st.session_state.selected_cup_data in CUPS_RACES else 0)
     
             with col2:
-                race = race_selector(cup)
+                # Update session state when cup changes
+                if cup != st.session_state.selected_cup:
+                    st.session_state.selected_cup = cup
+        
+                race = st.selectbox("Race", CUPS_RACES.get(cup, []))
                 tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
             
-            st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
-            submitted = st.form_submit_button("Submit Time")
+                st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
+                submitted = st.form_submit_button("Submit Time")
             
             if submitted:
                 if speler and cup and race and tijd:
