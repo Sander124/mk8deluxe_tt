@@ -725,7 +725,7 @@ def main():
                 if speler and cup and race and tijd:
                     # Validate time format
                     test_seconds = time_to_seconds(tijd)
-                    if test_seconds != float('inf'):
+                    if test_seconds != float('inf') and tijd[1] == ':' and tijd[4] == '.':
                         if save_time_trial(speler, cup, race, tijd):
                             st.success(f"Time submitted: {speler} - {race} - {tijd}")
                             st.rerun()
