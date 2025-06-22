@@ -721,8 +721,9 @@ def main():
             speler = st.text_input("Player", placeholder="Voer spelernaam in")
             race = st.selectbox("Race", sorted(all_races))  # Gesorteerd voor betere UX
             tijd = st.text_input("Time", placeholder="MM:SS.mmm (bijv. 1:32.456)")
-        st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
-        submitted = st.form_submit_button("Submit Time")
+        
+            st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
+            submitted = st.form_submit_button("Submit Time")
         
         if submitted:
             cup = get_cup_from_race(race)
