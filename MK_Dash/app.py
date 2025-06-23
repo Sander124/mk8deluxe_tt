@@ -433,6 +433,8 @@ def send_telegram_photo(photo_path, caption):
             response.raise_for_status()
         except Exception as e:
             st.warning(f"Failed to send Telegram photo: {e}")
+            if 'response' in locals():
+                st.error(f"Telegram response: {response.text}")
     
 
 def main():
