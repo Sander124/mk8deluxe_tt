@@ -792,7 +792,7 @@ def main():
                         if race_image_path:
                             send_telegram_photo(race_image_path, message)
                         st.success(f"Tijd opgeslagen: {speler} - {race} - {tijd}")
-                        st.rerun()
+                        #st.rerun()
                     else:
                         st.error("Fout bij opslaan van tijd")
                 else:
