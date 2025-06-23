@@ -8,6 +8,7 @@ from PIL import Image
 import io
 import os
 import base64
+import requests
 
 # Set wide layout and robust background at the very top
 st.set_page_config(
@@ -415,6 +416,22 @@ def image_to_base64(image):
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
+def send_telegram_message(message):
+    bot_token = st.secrets["telegram"]["bot_token"]
+    chat_id = st.secrets["telegram"]["chat_id"]
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "HTML"
+    }
+    try:
+        response = requests.post(url, data=payload, timeout=5)
+        response.raise_for_status()
+    except Exception as e:
+        st.warning(f"Failed to send Telegram message: {e}")
+
+
 def main():
     # F1 styled main title
     st.markdown("""
@@ -732,6 +749,14 @@ def main():
                 test_seconds = time_to_seconds(tijd)
                 if test_seconds != float('inf') and tijd[1] == ':' and tijd[4] == '.':
                     if save_time_trial(speler, cup, race, tijd):
+                        # Format the message as on the page
+                        now = datetime.now().strftime('%d %B %Y %H:%M')
+                        message = (
+                                f"<em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> "
+                                f"and set a time of <em>{tijd}</em>.\n"
+                                f"<i>{now}</i>"
+                            )
+                        send_telegram_message(message)
                         st.success(f"Time submitted: {speler} - {race} - {tijd}")
                         st.rerun()
                     else:
