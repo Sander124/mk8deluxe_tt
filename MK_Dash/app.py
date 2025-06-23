@@ -430,10 +430,6 @@ def send_telegram_message(message):
         response.raise_for_status()
     except Exception as e:
         st.warning(f"Failed to send Telegram message: {e}")
-        if 'response' in locals():
-            st.error(f"Telegram response: {response.text}")
-        import traceback
-        st.error(traceback.format_exc())
 
 
 def main():
