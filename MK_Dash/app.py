@@ -783,11 +783,11 @@ def main():
                         # --- End position calculation ---
 
                         message = (
-                            f"<em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> "
-                            f"and set a time of <em>{tijd}</em>.<br>"
-                            f"{pos_text}<br>"
-                            f"<i>{now}</i>"
-                        )
+                                f"<em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> "
+                                f"and set a time of <em>{tijd}</em>.\n"
+                                f"{pos_text}\n"
+                                f"<i>{now}</i>"
+                            )
                         race_image_path = get_race_image(race)
                         if race_image_path:
                             send_telegram_photo(race_image_path, message)
