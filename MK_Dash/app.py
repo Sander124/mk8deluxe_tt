@@ -771,20 +771,20 @@ def main():
                             pos = position.index[0] + 1
                             total = len(race_df)
                             if pos == 1:
-                                pos_text = f"<i>This is now the <b>fastest</b> time on this track! (P1/{total})</i>"
+                                pos_text = f"This is now the <b>fastest</b> time on this track! (P1/{total})"
                             elif pos == 2:
-                                pos_text = f"<i>This is now the <b>2nd fastest</b> time on this track! (P2/{total})</i>"
+                                pos_text = f"This is now the <b>2nd fastest</b> time on this track! (P2/{total})"
                             elif pos == 3:
-                                pos_text = f"<i>This is now the <b>3rd fastest</b> time on this track! (P3/{total})</i>"
+                                pos_text = f"This is now the <b>3rd fastest</b> time on this track! (P3/{total})"
                             else:
-                                pos_text = f"<i>This is now the <b>{pos}th fastest</b> time on this track! (P{pos}/{total})</i>"
+                                pos_text = f"This is now the <b>{pos}th fastest</b> time on this track! (P{pos}/{total})"
                         else:
                             pos_text = ""
                         # --- End position calculation ---
 
                         message = (
                                 f"<em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> "
-                                f"and set a time of <em>{tijd}</em>.\n"
+                                f"and set a time of <em>{tijd}</em>.\n\n"
                                 f"{pos_text}\n"
                                 f"<i>{now}</i>"
                             )
@@ -792,7 +792,7 @@ def main():
                         if race_image_path:
                             send_telegram_photo(race_image_path, message)
                         st.success(f"Tijd opgeslagen: {speler} - {race} - {tijd}")
-                        #st.rerun()
+                        st.rerun()
                     else:
                         st.error("Fout bij opslaan van tijd")
                 else:
