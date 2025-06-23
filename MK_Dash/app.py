@@ -417,21 +417,23 @@ def image_to_base64(image):
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
-def send_telegram_message(message):
+def send_telegram_photo(photo_path, caption):
     bot_token = st.secrets["telegram"]["bot_token"]
     chat_id = st.secrets["telegram"]["chat_id"]
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "HTML"
-    }
-    try:
-        response = requests.post(url, data=payload, timeout=5)
-        response.raise_for_status()
-    except Exception as e:
-        st.warning(f"Failed to send Telegram message: {e}")
-
+    url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
+    with open(photo_path, "rb") as photo_file:
+        files = {"photo": photo_file}
+        data = {
+            "chat_id": chat_id,
+            "caption": caption,
+            "parse_mode": "HTML"
+        }
+        try:
+            response = requests.post(url, data=data, files=files, timeout=10)
+            response.raise_for_status()
+        except Exception as e:
+            st.warning(f"Failed to send Telegram photo: {e}")
+    
 
 def main():
     # F1 styled main title
@@ -758,8 +760,10 @@ def main():
                                 f"and set a time of <em>{tijd}</em>.\n"
                                 f"<i>{now}</i>"
                             )
-                        send_telegram_message(message)
-                        st.success(f"Time submitted: {speler} - {race} - {tijd}")
+                        race_image_path = get_race_image(race)
+                        if race_image_path:
+                            send_telegram_photo(race_image_path, message)
+                        st.success(f"Tijd opgeslagen: {speler} - {race} - {tijd}")
                         st.rerun()
                     else:
                         st.error("Fout bij opslaan van tijd")
