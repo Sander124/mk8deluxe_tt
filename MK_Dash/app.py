@@ -757,11 +757,37 @@ def main():
                         # Format the message as on the page, using Amsterdam time
                         amsterdam_tz = pytz.timezone('Europe/Amsterdam')
                         now = datetime.now(amsterdam_tz).strftime('%d %B %Y %H:%M')
+
+                        # --- Calculate new position for this time on this track ---
+                        # Reload data to get the latest
+                        df = load_data()
+                        race_df = df[(df['cup'] == cup) & (df['race'] == race)].copy()
+                        race_df['seconds'] = race_df['tijd'].apply(time_to_seconds)
+                        race_df = race_df.sort_values('seconds')
+                        # Find the position (1-based) of this speler's time
+                        position = race_df.reset_index(drop=True)
+                        position = position[(position['speler'] == speler) & (position['tijd'] == tijd)]
+                        if not position.empty:
+                            pos = position.index[0] + 1
+                            total = len(race_df)
+                            if pos == 1:
+                                pos_text = f"<i>This is now the <b>fastest</b> time on this track! (P1/{total})</i>"
+                            elif pos == 2:
+                                pos_text = f"<i>This is now the <b>2nd fastest</b> time on this track! (P2/{total})</i>"
+                            elif pos == 3:
+                                pos_text = f"<i>This is now the <b>3rd fastest</b> time on this track! (P3/{total})</i>"
+                            else:
+                                pos_text = f"<i>This is now the <b>{pos}th fastest</b> time on this track! (P{pos}/{total})</i>"
+                        else:
+                            pos_text = ""
+                        # --- End position calculation ---
+
                         message = (
-                                f"<em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> "
-                                f"and set a time of <em>{tijd}</em>.\n"
-                                f"<i>{now}</i>"
-                            )
+                            f"<em>{speler}</em> submitted a new time at <em>{cup}</em> - <em>{race}</em> "
+                            f"and set a time of <em>{tijd}</em>.<br>"
+                            f"{pos_text}<br>"
+                            f"<i>{now}</i>"
+                        )
                         race_image_path = get_race_image(race)
                         if race_image_path:
                             send_telegram_photo(race_image_path, message)
