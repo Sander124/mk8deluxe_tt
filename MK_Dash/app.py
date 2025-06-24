@@ -220,7 +220,7 @@ CUPS_RACES = {
     "Flower Cup": ["Mario Circuit", "Toad Harbor", "Twisted Mansion", "Shy Guy Falls"],
     "Star Cup": ["Sunshine Airport", "Dolphin Shoals", "Electrodrome", "Mount Wario"],
     "Special Cup": ["Cloudtop Cruise", "Bone-Dry Dunes", "Bowsers Castle", "Rainbow Road"],
-    "Shell Cup": ["Moo Moo Meadows", "Mario Circuit", "Cheep Cheep Beach", "Toads Turnpike"],
+    "Shell Cup": ["Moo Moo Meadows", "GBA Mario Circuit", "Cheep Cheep Beach", "Toads Turnpike"],
     "Banana Cup": ["Dry Dry Desert", "Donut Plains 3", "Royal Raceway", "DK Jungle"],
     "Leaf Cup": ["Wario Stadium", "Sherbet Land", "Music Park", "Yoshi Valley"],
     "Lightning Cup": ["Tick-Tock Clock", "Piranha Plant Slide", "Grumble Volcano", "N64 Rainbow Road"],
