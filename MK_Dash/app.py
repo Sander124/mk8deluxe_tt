@@ -494,13 +494,11 @@ def main():
                         medal = " "
                     
                     st.markdown(f"""
-                    <div class='f1-ranking-row {row_class}'>
-                        <div style='display: flex; align-items: center;'>
-                            <span style='font-size: 1.2em; font-weight: bold; margin-right: 20px; min-width: 30px;'>{position}</span>
-                            <span style='font-size: 1.1em; margin-right: 10px;'>{medal}</span>
-                            <span style='font-size: 1.1em; font-weight: bold;'>{speler.upper()}</span>
-                        </div>
-                        <div style='font-size: 1.2em; font-weight: bold;'>{points} PTS</div>
+                    <div class='f1-ranking-row {row_class}' style='display: flex; align-items: center;'>
+                        <span style='min-width: 2.2em; display: inline-block; text-align: right;'>{position}</span>
+                        <span style='min-width: 2em; display: inline-block; text-align: center;'>{medal}</span>
+                        <span style='margin-left: 0.5em; font-weight: bold;'>{speler.upper()}</span>
+                        <span style='margin-left: auto; font-size: 1.2em; font-weight: bold;'>{points} PTS</span>
                     </div>
                     """, unsafe_allow_html=True)
             
