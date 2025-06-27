@@ -491,7 +491,7 @@ def main():
                         medal = "🥉"
                     else:
                         row_class = ""
-                        medal = ""
+                        medal = " "
                     
                     st.markdown(f"""
                     <div class='f1-ranking-row {row_class}'>
