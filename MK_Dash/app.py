@@ -528,25 +528,17 @@ def main():
                         if j < len(cols):
                             with cols[j]:
                                 # F1 styled cup container
-                                st.markdown(f"""
-                                <div class='f1-cup-container'>
-                                    <div class='f1-cup-header'>
-                                        <div class='f1-cup-image'>
-                                """, unsafe_allow_html=True)
-                                
-                                display_cup_image(cup, width=60)
-                                
-                                st.markdown(f"""
-                                        </div>
-                                        <div class='f1-cup-title'>{cup.upper()}</div>
-                                    </div>
-                                """, unsafe_allow_html=True)
+                                st.markdown(f"<div class='f1-cup-container'>", unsafe_allow_html=True)
+                                col_img, col_name = st.columns([1, 9])
+                                with col_img:
+                                    display_cup_image(cup, width=60)
+                                with col_name:
+                                    st.markdown(f"<div class='f1-cup-title' style='font-size: 1.3em; font-family: Monaco, Consolas, monospace; color: white; display: flex; align-items: center; height: 60px; margin-left: 0;'>{cup.upper()}</div>", unsafe_allow_html=True)
                                 
                                 # Get cup-specific ranking
                                 cup_points = points_df[points_df['cup'] == cup]
                                 if not cup_points.empty:
                                     cup_ranking = cup_points.groupby('speler')['points'].sum().sort_values(ascending=False)
-                                    
                                     for idx, (speler, points) in enumerate(cup_ranking.items()):
                                         position = idx + 1
                                         if position == 1:
@@ -556,12 +548,13 @@ def main():
                                         elif position == 3:
                                             medal = "🥉"
                                         else:
-                                            medal = f"{position}."
-                                        
+                                            medal = " "
                                         st.markdown(f"""
-                                        <div class='f1-points-row'>
-                                            <span>{position}. {medal} {speler.upper()}</span>
-                                            <span>{points} PTS</span>
+                                        <div class='f1-points-row' style='display: flex; align-items: center;'>
+                                            <span style='min-width: 2.2em; display: inline-block; text-align: right;'>{position}.</span>
+                                            <span style='min-width: 2em; display: inline-block; text-align: center;'>{medal}</span>
+                                            <span style='margin-left: 0.5em; font-weight: bold;'>{speler.upper()}</span>
+                                            <span style='margin-left: auto;'>{points} PTS</span>
                                         </div>
                                         """, unsafe_allow_html=True)
                                 else:
