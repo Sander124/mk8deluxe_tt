@@ -790,7 +790,7 @@ def main():
                             )
                         race_image_path = get_race_image(race)
                         if race_image_path:
-                            send_telegram_photo(race_image_path, message)
+                            #send_telegram_photo(race_image_path, message)
                         st.success(f"Tijd opgeslagen: {speler} - {race} - {tijd}")
                         st.rerun()
                     else:
