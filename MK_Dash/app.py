@@ -640,86 +640,75 @@ def main():
             # Show selected cup details
             if selected_cup:
                 # Display selected cup with F1 styling
-                st.markdown(f"""
-                <div class='f1-cup-container' style='margin: 20px 0;'>
-                    <div class='f1-cup-header'>
-                        <div class='f1-cup-image'>
-                """, unsafe_allow_html=True)
-                
-                display_cup_image(selected_cup, width=80)
-                
-                st.markdown(f"""
-                        </div>
-                        <div class='f1-cup-title' style='font-size: 1.5em;'>{selected_cup.upper()}</div>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown(f"<div class='f1-cup-container' style='margin: 20px 0;'>", unsafe_allow_html=True)
+                col_img, col_name = st.columns([1, 10])
+                with col_img:
+                    display_cup_image(selected_cup, width=80)
+                with col_name:
+                    st.markdown(f"<div class='f1-cup-title' style='font-size: 1.5em; font-family: Monaco, Consolas, monospace; color: white; display: flex; align-items: center; height: 80px; margin-left: 0;'>{selected_cup.upper()}</div>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
                 
                 cup_data = df[df['cup'] == selected_cup]
                 
-                #if not cup_data.empty:
-                # Show race results
-                races = CUPS_RACES[selected_cup]
-                
-                for race in races:
-                    race_data = cup_data[cup_data['race'] == race]
-                    # Prepare race image or emoji for inline display
-                    race_image_path = get_race_image(race)
-                    if race_image_path:
-                        try:
-                            race_image = Image.open(race_image_path)#.resize((64, 180))
-                            img_base64 = image_to_base64(race_image)
-                            race_img_html = f"<img src='data:image/png;base64,{img_base64}' style='height:50px;width:50px;vertical-align:middle;margin-right:10px;'/>"
-                        except Exception as e:
+                if not cup_data.empty:
+                    # Show race results
+                    races = CUPS_RACES[selected_cup]
+                    
+                    for race in races:
+                        race_data = cup_data[cup_data['race'] == race]
+                        # Prepare race image or emoji for inline display
+                        race_image_path = get_race_image(race)
+                        if race_image_path:
+                            try:
+                                race_image = Image.open(race_image_path).resize((64, 96))
+                                img_base64 = image_to_base64(race_image)
+                                race_img_html = f"<img src='data:image/png;base64,{img_base64}' style='height:50px;width:50px;vertical-align:middle;margin-right:10px;'/>"
+                            except Exception as e:
+                                race_img_html = "🏎️ "
+                        else:
                             race_img_html = "🏎️ "
-                    else:
-                        race_img_html = "🏎️ "
-                    # Always show the race image and name
-                    st.markdown(f"""
-                    <div style='background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #e74c3c;'>
-                        <h4 style='color: white; margin: 0 0 10px 0; font-family: Monaco, Consolas, monospace;'>
-                            {race_img_html}{race.upper()}
-                        </h4>
-                    """, unsafe_allow_html=True)
-                    if not race_data.empty:
-                        # Sort by time
-                        race_data = race_data.copy()
-                        race_data['seconds'] = race_data['tijd'].apply(time_to_seconds)
-                        race_data = race_data.sort_values('seconds')
-                        
-                        # Display results in F1 style
-                        for idx, (_, row) in enumerate(race_data.iterrows()):
-                            rank = idx + 1
-                            if rank == 1:
-                                medal = "🏆"
-                                style_class = "first"
-                            elif rank == 2:
-                                medal = "🥈"
-                                style_class = "second"
-                            elif rank == 3:
-                                medal = "🥉"
-                                style_class = "third"
-                            else:
-                                medal = f"{rank}."
-                                style_class = ""
-                            
-                            st.markdown(f"""
-                            <div class='f1-ranking-row {style_class}' style='margin: 5px 0; font-size: 0.9em;'>
-                                <div style='display: flex; align-items: center;'>
-                                    <span style='margin-right: 15px; min-width: 25px;'>{rank}</span>
-                                    <span style='margin-right: 10px;'>{medal}</span>
-                                    <span>{row['speler'].upper()}</span>
+                        # Always show the race image and name
+                        st.markdown(f"""
+                        <div style='background: rgba(255,255,255,0.1); padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #e74c3c;'>
+                            <h4 style='color: white; margin: 0 0 10px 0; font-family: Monaco, Consolas, monospace;'>
+                                {race_img_html}{race.upper()}
+                            </h4>
+                        """, unsafe_allow_html=True)
+                        if not race_data.empty:
+                            # Sort by time
+                            race_data = race_data.copy()
+                            race_data['seconds'] = race_data['tijd'].apply(time_to_seconds)
+                            race_data = race_data.sort_values('seconds')
+                            # Display results in F1 style
+                            for idx, (_, row) in enumerate(race_data.iterrows()):
+                                rank = idx + 1
+                                if rank == 1:
+                                    medal = "🏆"
+                                    style_class = "first"
+                                elif rank == 2:
+                                    medal = "🥈"
+                                    style_class = "second"
+                                elif rank == 3:
+                                    medal = "🥉"
+                                    style_class = "third"
+                                else:
+                                    medal = " "
+                                    style_class = ""
+                                st.markdown(f"""
+                                <div class='f1-ranking-row {style_class}' style='margin: 5px 0; font-size: 0.9em; display: flex; align-items: center;'>
+                                    <span style='min-width: 2.2em; display: inline-block; text-align: right;'>{rank}</span>
+                                    <span style='min-width: 2em; display: inline-block; text-align: center;'>{medal}</span>
+                                    <span style='margin-left: 0.5em; font-weight: bold;'>{row['speler'].upper()}</span>
+                                    <span style='margin-left: auto; font-family: Monaco, Consolas, monospace;'>{row['tijd']}</span>
                                 </div>
-                                <span style='font-family: Monaco, Consolas, monospace;'>{row['tijd']}</span>
+                                """, unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"""
+                            <p style='color: #7f8c8d; margin: 5px 0 0 0; font-style: italic;'>No times available</p>
                             </div>
                             """, unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"""
-                        <p style='color: #7f8c8d; margin: 5px 0 0 0; font-style: italic;'>No times available</p>
-                        </div>
-                        """, unsafe_allow_html=True)
-            #else:
-                #st.info(f"Nog geen tijden beschikbaar voor {selected_cup}")
+                else:
+                    st.info(f"Nog geen tijden beschikbaar voor {selected_cup}")
         else:
             st.info("Nog geen data beschikbaar. Voeg tijden toe in de 'Tijd Invoeren' tab.")
     
