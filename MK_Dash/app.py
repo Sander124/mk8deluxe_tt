@@ -937,7 +937,7 @@ def main():
                 # Validate time format
                 test_seconds = time_to_seconds(tijd)
                 if test_seconds != float('inf') and tijd[1] == ':' and tijd[4] == '.':
-                    if save_time_trial(speler, cup, race, tijd):
+                    if save_time_trial(speler.strip(), cup, race, tijd):
                         # Format the message as on the page, using Amsterdam time
                         amsterdam_tz = pytz.timezone('Europe/Amsterdam')
                         now = datetime.now(amsterdam_tz).strftime('%d %B %Y %H:%M')
