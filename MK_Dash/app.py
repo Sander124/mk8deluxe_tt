@@ -889,8 +889,8 @@ def main():
             # Sort: biggest time diff first, then worst placement
             worst_rows = [r for r in worst_rows if r['placement'] is not None and r['time_diff'] is not None]
             worst_rows = sorted(worst_rows, key=lambda x: (-x['placement'], -x['time_diff']))
-            # Show top 5 worst tracks
-            for wr in worst_rows[:10]:
+            # Show top 20 worst tracks
+            for wr in worst_rows[:20]:
                 race_img_path = get_race_image(wr['race'])
                 if race_img_path:
                     try:
