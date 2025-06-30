@@ -454,7 +454,7 @@ def main():
     df = load_data()
     
     # Create tabs
-    tab1, tab2, tab3 = st.tabs(["📊 STANDINGS", "🏆 TIME TRIAL", "⏱️ SUBMIT TIMES"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 DASHBOARD", "🏆 TIME TRIAL", "📈 PERFORMANCE ANALYSIS", "⏱️ SUBMIT TIMES"])
     
     with tab1:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>DRIVER STANDINGS</h2>", unsafe_allow_html=True)
@@ -713,6 +713,210 @@ def main():
             st.info("Nog geen data beschikbaar. Voeg tijden toe in de 'Tijd Invoeren' tab.")
     
     with tab3:
+        st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>PERFORMANCE ANALYSIS</h2>", unsafe_allow_html=True)
+        # Player selection
+        all_players = sorted(df['speler'].unique()) if not df.empty else []
+        selected_player = st.selectbox("Select Player", all_players, key="perf_player")
+        if selected_player:
+            player_df = df[df['speler'] == selected_player].copy()
+            # Calculate points and placements
+            points_df = calculate_points(df)
+            player_points = points_df[points_df['speler'] == selected_player]
+            total_points = player_points['points'].sum()
+            num_races = len(player_df)
+            total_races = len(df['race'].unique()) if not df.empty else 0
+            # Placement distribution
+            place_counts = player_points['rank'].value_counts().sort_index()
+            pie_labels = ['1st', '2nd', '3rd', '4th+']
+            pie_values = [place_counts.get(1,0), place_counts.get(2,0), place_counts.get(3,0), place_counts.sum() - sum([place_counts.get(i,0) for i in [1,2,3]])]
+            # Extended stats
+            avg_placement = player_points['rank'].mean() if not player_points.empty else None
+            podiums = sum([place_counts.get(i,0) for i in [1,2,3]])
+            podium_pct = (podiums / num_races * 100) if num_races > 0 else 0
+            # Best track (highest placement, then margin logic)
+            best_track = None
+            best_rows = []
+            if not player_df.empty:
+                for _, row in player_df.iterrows():
+                    race = row['race']
+                    tijd = row['tijd']
+                    race_times = df[df['race'] == race].copy()
+                    race_times['seconds'] = race_times['tijd'].apply(time_to_seconds)
+                    race_times = race_times.sort_values('seconds').reset_index(drop=True)
+                    placement = race_times[(race_times['speler'] == selected_player) & (race_times['tijd'] == tijd)]
+                    if not placement.empty:
+                        pos = placement.index[0] + 1
+                        player_time = time_to_seconds(tijd)
+                        fastest_time = race_times.iloc[0]['seconds'] if not race_times.empty else None
+                        margin_to_fastest = player_time - fastest_time if fastest_time is not None else None
+                        # Margin to 2nd place (if player is 1st)
+                        if pos == 1 and len(race_times) > 1:
+                            second_time = race_times.iloc[1]['seconds']
+                            margin_to_2nd = second_time - player_time
+                        else:
+                            margin_to_2nd = None
+                        best_rows.append({
+                            'race': race,
+                            'placement': pos,
+                            'margin_to_2nd': margin_to_2nd,
+                            'margin_to_fastest': margin_to_fastest
+                        })
+                # Find best placement (lowest number)
+                if best_rows:
+                    min_place = min(r['placement'] for r in best_rows)
+                    best_place_rows = [r for r in best_rows if r['placement'] == min_place]
+                    if min_place == 1:
+                        # Pick the one with the biggest margin to 2nd
+                        best_place_rows = [r for r in best_place_rows if r['margin_to_2nd'] is not None]
+                        if best_place_rows:
+                            best_track = max(best_place_rows, key=lambda r: r['margin_to_2nd'])['race']
+                        else:
+                            best_track = best_rows[0]['race']
+                    else:
+                        # Pick the one with the smallest margin to fastest
+                        best_track = min(best_place_rows, key=lambda r: r['margin_to_fastest'] if r['margin_to_fastest'] is not None else float('inf'))['race']
+            avg_placement_str = f"{avg_placement:.2f}" if avg_placement is not None else "N/A"
+            # Player's overall rank by total points
+            overall_ranking = points_df.groupby('speler')['points'].sum().sort_values(ascending=False)
+            player_rank = None
+            for idx, (speler, _) in enumerate(overall_ranking.items()):
+                if speler == selected_player:
+                    player_rank = idx + 1
+                    break
+            # Best Cup logic
+            best_cup = None
+            best_cup_points = None
+            best_cup_placements = None
+            if not player_points.empty:
+                cup_points = player_points.groupby('cup')['points'].sum()
+                max_points = cup_points.max()
+                best_cups = cup_points[cup_points == max_points].index.tolist()
+                if len(best_cups) == 1:
+                    best_cup = best_cups[0]
+                else:
+                    # Tie: check for most higher placements
+                    cup_placement_counts = {}
+                    for cup in best_cups:
+                        cup_races = player_points[player_points['cup'] == cup]
+                        # Count 1st, 2nd, 3rd, 4th+ placements
+                        counts = [sum(cup_races['rank'] == i) for i in [1,2,3,4]]
+                        cup_placement_counts[cup] = counts
+                    # Sort by most 1st, then 2nd, then 3rd, then 4th+
+                    sorted_cups = sorted(best_cups, key=lambda c: (-cup_placement_counts[c][0], -cup_placement_counts[c][1], -cup_placement_counts[c][2], -cup_placement_counts[c][3]))
+                    # Check for ties after sorting
+                    top_counts = cup_placement_counts[sorted_cups[0]]
+                    tied = [c for c in sorted_cups if cup_placement_counts[c] == top_counts]
+                    if len(tied) == 1:
+                        best_cup = tied[0]
+                    else:
+                        best_cup = ', '.join(tied)
+            # Layout: left = stats, right = pie chart
+            col_stats, col_pie = st.columns([2,2])
+            with col_stats:
+                st.markdown(f"""
+                <div class='f1-message-box' style='background: linear-gradient(135deg, #232526 0%, #414345 100%); border: 3px solid #f1c40f; box-shadow: 0 4px 16px #000a; font-size: 1.1em;'>
+                    <b style='font-size:1.3em;letter-spacing:2px;'>{selected_player.upper()}</b><br>
+                    <span style='color:#7f8c8d;font-size:1.1em;'>🏅 Rank:</span> <b style='color:#f1c40f'>{player_rank if player_rank else '-'}</b><br>
+                    <span style='color:#f1c40f;font-size:1.1em;'>🏆 Total Points:</span> <b style='color:#f1c40f'>{total_points}</b><br>
+                    <span style='color:#e74c3c;font-size:1.1em;'>🏁 Races Submitted:</span> <b style='color:#f1c40f'>{num_races} / {total_races}</b><br>
+                    <span style='color:#f39c12;font-size:1.1em;'>📊 Avg. Placement:</span> <b style='color:#f1c40f'>{avg_placement_str}</b><br>
+                    <span style='color:#16a085;font-size:1.1em;'>🥇 Podium:</span> <b style='color:#f1c40f'>{podium_pct:.1f}%</b><br>
+                    <span style='color:#8e44ad;font-size:1.1em;'>🏆 Best Cup:</span> <b style='color:#f1c40f'>{best_cup.upper() if best_cup else 'N/A'}</b><br>
+                    <span style='color:#2980b9;font-size:1.1em;'>🚦 Best Track:</span> <b style='color:#f1c40f'>{best_track.upper() if best_track else 'N/A'}</b>
+                </div>
+                """, unsafe_allow_html=True)
+            with col_pie:
+                pie_colors = ['#f1c40f', '#95a5a6', '#cd7f32', '#34495e']
+                fig = go.Figure(data=[go.Pie(
+                    labels=pie_labels,
+                    values=pie_values,
+                    marker=dict(colors=pie_colors, line=dict(color='#232526', width=2)),
+                    textinfo='label+percent',
+                    hole=0.35,
+                    pull=[0.06,0.03,0,0],
+                    direction='clockwise',
+                    rotation=45,
+                    sort=False
+                )])
+                fig.update_traces(
+                    textfont_size=18,
+                    textfont_color='white',
+                    textposition='inside',
+                    showlegend=False,
+                    opacity=0.98,
+                    marker=dict(line=dict(color='#232526', width=2)),
+                    sort=False
+                )
+                fig.update_layout(
+                    showlegend=False,
+                    margin=dict(l=0, r=0, t=0, b=0),
+                    paper_bgcolor='rgba(20,20,30,1)',
+                    plot_bgcolor='rgba(20,20,30,1)',
+                    font=dict(family='Monaco, Consolas, monospace', color='white', size=16),
+                    height=340
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            # --- Worst performing tracks ---
+            st.markdown("<h3 style='color: #e74c3c; font-family: Monaco, Consolas, monospace; margin-top: 2em;'>Worst Performing Tracks</h3>", unsafe_allow_html=True)
+            # For each race, get placement and time diff to fastest
+            worst_rows = []
+            for _, row in player_df.iterrows():
+                race = row['race']
+                cup = row['cup']
+                tijd = row['tijd']
+                # Get all times for this race
+                race_times = df[df['race'] == race].copy()
+                race_times['seconds'] = race_times['tijd'].apply(time_to_seconds)
+                race_times = race_times.sort_values('seconds')
+                # Placement
+                placement = race_times.reset_index(drop=True)
+                placement = placement[(placement['speler'] == selected_player) & (placement['tijd'] == tijd)]
+                if not placement.empty:
+                    pos = placement.index[0] + 1
+                else:
+                    pos = None
+                # Time diff to fastest
+                best_time = race_times.iloc[0]['seconds'] if not race_times.empty else None
+                player_time = time_to_seconds(tijd)
+                time_diff = player_time - best_time if best_time is not None else None
+                worst_rows.append({
+                    'race': race,
+                    'cup': cup,
+                    'tijd': tijd,
+                    'placement': pos,
+                    'time_diff': time_diff
+                })
+            # Sort: biggest time diff first, then worst placement
+            worst_rows = [r for r in worst_rows if r['placement'] is not None and r['time_diff'] is not None]
+            worst_rows = sorted(worst_rows, key=lambda x: (-x['placement'], -x['time_diff']))
+            # Show top 5 worst tracks
+            for wr in worst_rows[:10]:
+                race_img_path = get_race_image(wr['race'])
+                if race_img_path:
+                    try:
+                        race_image = Image.open(race_img_path).resize((64, 96))
+                        img_base64 = image_to_base64(race_image)
+                        race_img_html = f"<img src='data:image/png;base64,{img_base64}' style='height:50px;width:50px;vertical-align:middle;margin-right:10px;'/>"
+                    except Exception as e:
+                        race_img_html = "🏎️ "
+                else:
+                    race_img_html = "🏎️ "
+                time_diff_str = f"+{wr['time_diff']:.3f}s" if wr['time_diff'] is not None else "N/A"
+                st.markdown(f"""
+                <div style='background: linear-gradient(135deg, #232526 0%, #414345 100%); padding: 18px; margin: 16px 0; border-radius: 12px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 24px #000b; position:relative;'>
+                    <h4 style='color: #f1c40f; margin: 0 0 12px 0; font-family: Monaco, Consolas, monospace; letter-spacing:1px;'>
+                        {race_img_html}{wr['race'].upper()}
+                    </h4>
+                    <div style='display: flex; align-items: center; font-family: Monaco, Consolas, monospace; font-size:1.1em;'>
+                        <span style='min-width: 2.2em; display: inline-block; text-align: right; color:#e74c3c; font-weight:bold;'>Place: {wr['placement']}</span>
+                        <span style='margin-left: 1.5em;'>Your time: <b style='color:#f1c40f'>{wr['tijd']}</b></span>
+                        <span style='margin-left: 1.5em; font-size:1.15em;'><b style='color:#e74c3c; background: #fff2; padding: 2px 10px; border-radius: 8px; box-shadow:0 2px 8px #e74c3c55;'>{time_diff_str}</b></span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+    
+    
+    with tab4:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>SUBMIT YOUR TIME</h2>", unsafe_allow_html=True)
 
         all_races = []
