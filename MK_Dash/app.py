@@ -1046,7 +1046,7 @@ def main():
     with tab5:
         st.markdown("<h2 style='color: #e74c3c; font-family: Monaco, Consolas, monospace;'>Developer Environment</h2>", unsafe_allow_html=True)
         try:
-            dev_password = st.secrets['dev_password']
+            dev_password = st.secrets["developer"]["dev_password"]
         except KeyError:
             st.error("No developer password set in Streamlit secrets! Please add 'dev_password' to your secrets.")
             st.stop()
