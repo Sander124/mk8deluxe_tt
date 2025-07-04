@@ -1045,14 +1045,44 @@ def main():
                 """, unsafe_allow_html=True)
     with tab5:
         st.markdown("<h2 style='color: #e74c3c; font-family: Monaco, Consolas, monospace;'>Developer Environment</h2>", unsafe_allow_html=True)
-        dev_password = st.secrets.get('dev_password', None)
+        try:
+            dev_password = st.secrets['dev_password']
+        except KeyError:
+            st.error("No developer password set in Streamlit secrets! Please add 'dev_password' to your secrets.")
+            st.stop()
         if 'dev_env_authenticated' not in st.session_state:
             st.session_state['dev_env_authenticated'] = False
-        st.write(dev_password)
         if not st.session_state['dev_env_authenticated']:
             pw = st.text_input("Enter developer password", type="password")
-            if st.button("Login"):
-                if dev_password and pw == dev_password:
+            themed_login = st.markdown('''
+                <style>
+                .stButton>button.dev-login-btn {
+                    background: linear-gradient(90deg, #e74c3c 0%, #f1c40f 100%) !important;
+                    color: white !important;
+                    font-weight: bold !important;
+                    border-radius: 8px !important;
+                    border: 2px solid #f1c40f !important;
+                    font-size: 1.1em !important;
+                    margin-top: 8px;
+                    margin-bottom: 8px;
+                    box-shadow: 0 2px 8px #e74c3c55;
+                }
+                .stButton>button.dev-login-btn:hover {
+                    filter: brightness(1.1);
+                    border-color: #e74c3c !important;
+                }
+                </style>
+            ''', unsafe_allow_html=True)
+            login_clicked = st.button("Login", key="dev_login_btn")
+            # Patch the button class for theming
+            st.markdown("""
+            <script>
+            const btn = window.parent.document.querySelector('button[data-testid="baseButton-dev_login_btn"]');
+            if (btn) btn.classList.add('dev-login-btn');
+            </script>
+            """, unsafe_allow_html=True)
+            if login_clicked:
+                if pw == dev_password:
                     st.session_state['dev_env_authenticated'] = True
                     st.success("Access granted.")
                     st.experimental_rerun()
