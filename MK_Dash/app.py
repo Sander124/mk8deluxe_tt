@@ -454,7 +454,7 @@ def main():
     df = load_data()
     
     # Create tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 DASHBOARD", "🏆 TIME TRIAL", "📈 PERFORMANCE ANALYSIS", "⏱️ SUBMIT TIMES", "🛠️ DEV_ENV"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 DASHBOARD", "🏆 TIME TRIAL", "📈 PERFORMANCE ANALYSIS", "⏱️ SUBMIT TIMES", "🛠️ DEVELOPER"])
     
     with tab1:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>DRIVER STANDINGS</h2>", unsafe_allow_html=True)
