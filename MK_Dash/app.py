@@ -1054,25 +1054,6 @@ def main():
             st.session_state['dev_env_authenticated'] = False
         if not st.session_state['dev_env_authenticated']:
             pw = st.text_input("Enter developer password", type="password")
-            themed_login = st.markdown('''
-                <style>
-                .stButton>button.dev-login-btn {
-                    background: linear-gradient(90deg, #e74c3c 0%, #f1c40f 100%) !important;
-                    color: white !important;
-                    font-weight: bold !important;
-                    border-radius: 8px !important;
-                    border: 2px solid #f1c40f !important;
-                    font-size: 1.1em !important;
-                    margin-top: 8px;
-                    margin-bottom: 8px;
-                    box-shadow: 0 2px 8px #e74c3c55;
-                }
-                .stButton>button.dev-login-btn:hover {
-                    filter: brightness(1.1);
-                    border-color: #e74c3c !important;
-                }
-                </style>
-            ''', unsafe_allow_html=True)
 
             st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
             login_clicked = st.button("Login", key="dev_login_btn")
@@ -1107,6 +1088,7 @@ def main():
             st.markdown(f"<b>Current Time:</b> <span style='color:#f1c40f;font-size:1.2em'>{tijd}</span>", unsafe_allow_html=True)
             if action == "Update a record":
                 new_time = st.text_input("Enter new time (MM:SS.mmm)", value=tijd, key="dev_new_time")
+                st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
                 if st.button("Update Time"):
                     db = init_connection()
                     if db is not None:
@@ -1118,6 +1100,7 @@ def main():
                         else:
                             st.warning("No changes made or update failed.")
             elif action == "Delete a record":
+                st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
                 if st.button("Delete Record", type="primary"):
                     db = init_connection()
                     if db is not None:
