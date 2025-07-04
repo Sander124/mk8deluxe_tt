@@ -454,7 +454,7 @@ def main():
     df = load_data()
     
     # Create tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 DASHBOARD", "🏆 TIME TRIAL", "📈 ANALYSIS", "⏱️ SUBMIT TIMES"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 DASHBOARD", "🏆 TIME TRIAL", "📈 PERFORMANCE ANALYSIS", "⏱️ SUBMIT TIMES", "🛠️ DEV_ENV"])
     
     with tab1:
         st.markdown("<h2 style='color: white; font-family: Monaco, Consolas, monospace;'>DRIVER STANDINGS</h2>", unsafe_allow_html=True)
@@ -1043,6 +1043,60 @@ def main():
                     <div class="f1-message-date">{date_str}</div>
                 </div>
                 """, unsafe_allow_html=True)
+    with tab5:
+        st.markdown("<h2 style='color: #e74c3c; font-family: Monaco, Consolas, monospace;'>Developer Environment</h2>", unsafe_allow_html=True)
+        dev_password = st.secrets.get('dev_password', None)
+        if 'dev_env_authenticated' not in st.session_state:
+            st.session_state['dev_env_authenticated'] = False
+        if not st.session_state['dev_env_authenticated']:
+            pw = st.text_input("Enter developer password", type="password")
+            if st.button("Login"):
+                if dev_password and pw == dev_password:
+                    st.session_state['dev_env_authenticated'] = True
+                    st.success("Access granted.")
+                    st.experimental_rerun()
+                else:
+                    st.error("Incorrect password.")
+            st.stop()
+        # Authenticated: show options
+        st.markdown("<h3 style='color: #f1c40f;'>Select Action</h3>", unsafe_allow_html=True)
+        action = st.radio("What do you want to do?", ["Update a record", "Delete a record"], horizontal=True)
+        # Get all unique players, cups, races
+        all_players = sorted(df['speler'].unique()) if not df.empty else []
+        player = st.selectbox("Select Player", all_players, key="dev_player")
+        cups = sorted(df[df['speler'] == player]['cup'].unique()) if player else []
+        cup = st.selectbox("Select Cup", cups, key="dev_cup")
+        races = sorted(df[(df['speler'] == player) & (df['cup'] == cup)]['race'].unique()) if player and cup else []
+        race = st.selectbox("Select Race", races, key="dev_race")
+        record = df[(df['speler'] == player) & (df['cup'] == cup) & (df['race'] == race)]
+        if not record.empty:
+            tijd = record.iloc[0]['tijd']
+            st.markdown(f"<b>Current Time:</b> <span style='color:#f1c40f;font-size:1.2em'>{tijd}</span>", unsafe_allow_html=True)
+            if action == "Update a record":
+                new_time = st.text_input("Enter new time (MM:SS.mmm)", value=tijd, key="dev_new_time")
+                if st.button("Update Time"):
+                    db = init_connection()
+                    if db is not None:
+                        collection = db.time_trials
+                        result = collection.update_one({'speler': player, 'cup': cup, 'race': race}, {'$set': {'tijd': new_time, 'timestamp': datetime.now()}})
+                        if result.modified_count > 0:
+                            st.success("Time updated successfully.")
+                            st.experimental_rerun()
+                        else:
+                            st.warning("No changes made or update failed.")
+            elif action == "Delete a record":
+                if st.button("Delete Record", type="primary"):
+                    db = init_connection()
+                    if db is not None:
+                        collection = db.time_trials
+                        result = collection.delete_one({'speler': player, 'cup': cup, 'race': race})
+                        if result.deleted_count > 0:
+                            st.success("Record deleted successfully.")
+                            st.experimental_rerun()
+                        else:
+                            st.warning("Delete failed.")
+        else:
+            st.info("No record found for this selection.")
                 
 if __name__ == "__main__":
     main()
