@@ -1085,7 +1085,7 @@ def main():
                 if pw == dev_password:
                     st.session_state['dev_env_authenticated'] = True
                     st.success("Access granted.")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Incorrect password.")
             st.stop()
@@ -1112,7 +1112,7 @@ def main():
                         result = collection.update_one({'speler': player, 'cup': cup, 'race': race}, {'$set': {'tijd': new_time, 'timestamp': datetime.now()}})
                         if result.modified_count > 0:
                             st.success("Time updated successfully.")
-                            st.experimental_rerun()
+                            st.rerun()
                         else:
                             st.warning("No changes made or update failed.")
             elif action == "Delete a record":
@@ -1123,7 +1123,7 @@ def main():
                         result = collection.delete_one({'speler': player, 'cup': cup, 'race': race})
                         if result.deleted_count > 0:
                             st.success("Record deleted successfully.")
-                            st.experimental_rerun()
+                            st.rerun()
                         else:
                             st.warning("Delete failed.")
         else:
