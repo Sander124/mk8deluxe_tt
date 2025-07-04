@@ -1048,6 +1048,7 @@ def main():
         dev_password = st.secrets.get('dev_password', None)
         if 'dev_env_authenticated' not in st.session_state:
             st.session_state['dev_env_authenticated'] = False
+        st.write(dev_password)
         if not st.session_state['dev_env_authenticated']:
             pw = st.text_input("Enter developer password", type="password")
             if st.button("Login"):
