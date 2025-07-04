@@ -1073,6 +1073,8 @@ def main():
                 }
                 </style>
             ''', unsafe_allow_html=True)
+
+            st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
             login_clicked = st.button("Login", key="dev_login_btn")
             # Patch the button class for theming
             st.markdown("""
