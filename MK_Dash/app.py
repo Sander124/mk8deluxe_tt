@@ -949,8 +949,10 @@ def main():
                         race_df['seconds'] = race_df['tijd'].apply(time_to_seconds)
                         race_df = race_df.sort_values('seconds')
                         # Find the position (1-based) of this speler's time
-                        position = race_df.reset_index(drop=True)
-                        position = position[(position['speler'] == speler) & (position['tijd'] == tijd)]
+                        #position = race_df.reset_index(drop=True)
+                        position = race_df[(race_df['speler'].str.strip().str.lower() == speler.strip().lower()) &
+                                            (race_df['cup'] == cup) & (race_df['race'] == race)]
+                        
                         if not position.empty:
                             pos = position.index[0] + 1
                             total = len(race_df)
