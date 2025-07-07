@@ -945,7 +945,7 @@ def main():
 
                         # --- Calculate new position for this time on this track ---
                         # Reload data to get the latest
-                        time.sleep(2)
+                        
                         df = load_data()
                         race_df = df[(df['cup'] == cup) & (df['race'] == race)].copy()
                         race_df['seconds'] = race_df['tijd'].apply(time_to_seconds)
