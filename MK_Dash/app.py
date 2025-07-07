@@ -945,15 +945,14 @@ def main():
 
                         # --- Calculate new position for this time on this track ---
                         # Reload data to get the latest
-                        
                         df = load_data()
                         race_df = df[(df['cup'] == cup) & (df['race'] == race)].copy()
                         race_df['seconds'] = race_df['tijd'].apply(time_to_seconds)
                         race_df = race_df.sort_values('seconds')
                         # Find the position (1-based) of this speler's time
-                        #position = race_df.reset_index(drop=True)
-                        position = race_df[(race_df['speler'].str.strip().str.lower() == speler.strip().lower()) &
-                                            (race_df['cup'] == cup) & (race_df['race'] == race)]
+                        position = race_df.reset_index(drop=True)
+                        position = position[(position['speler'].str.strip().str.lower() == speler.strip().lower()) &
+                                            (position['cup'] == cup) & (position['race'] == race)]
                         
                         if not position.empty:
                             pos = position.index[0] + 1
